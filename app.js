@@ -8,7 +8,10 @@ const mongoose = require("mongoose");
 const path = require("path");
 const passport = require("passport");
 
-const favicon = require('express-favicon');
+//DB CONFIG
+const db = require("./config/database");
+
+const favicon = require("express-favicon");
 
 // INITIALIZING EXPRESS WITH THE APP VARIABLE
 const app = express();
@@ -22,7 +25,7 @@ require("./config/passport")(passport);
 
 // CONNECT TO MONGOOSE
 mongoose
-  .connect("mongodb://localhost:27017/vidjot-dev")
+  .connect(db.mongoURI)
   .then(() => console.log("MongoDB Connected...."))
   .catch(err => console.log(err));
 
@@ -39,7 +42,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 //Favicon
-app.use(favicon('/img/favicon.ico'));
+app.use(favicon("/img/favicon.ico"));
 
 // override with POST having ?_method=DELETE
 app.use(methodOverride("_method"));
@@ -83,7 +86,9 @@ app.get("/about", (req, res) => {
 app.use("/ideas", ideas);
 app.use("/users", users);
 
-const port = 5000;
+//const port = 5000;
+// FOR HEROKU
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
